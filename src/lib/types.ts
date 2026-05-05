@@ -2,7 +2,7 @@ export type MatchStatus = "FT" | (string & {});
 
 export type ScorerEventType = "open_play" | "header" | "penalty" | (string & {});
 
-export type GenderCode = "M" | "F";
+export type GenderCode = "M" | "W";
 
 export type Scorer = {
   team: string;

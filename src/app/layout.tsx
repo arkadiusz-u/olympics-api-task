@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
+
 import { cn } from "@/lib/utils";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
+
 import "./globals.css";
 
 const interHeading = Inter({subsets:['latin'],variable:'--font-heading'});
@@ -30,7 +34,12 @@ export default function RootLayout({
       lang="en"
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, interHeading.variable)}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+     <body className="min-h-full flex flex-col">
+        <TooltipProvider>
+          {children}
+          <Toaster />
+        </TooltipProvider>
+      </body>
     </html>
   );
 }
