@@ -85,10 +85,6 @@ const getScorerType = (action: GoalAction): ScorerEventType => {
     return "open_play";
   }
 
-  if (action.pbpa_Action === "HEADER") {
-    return "header";
-  }
-
   return "unknown";
 };
 

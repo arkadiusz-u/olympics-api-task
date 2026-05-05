@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Paris 2024 Football Endpoint Builder
 
-## Getting Started
+Web application for QA engineers to generate and review reference JSON API payloads for Paris 2024 Olympic football matches.
 
-First, run the development server:
+The app reads the official Olympic schedule data, keeps only football matches, displays them in a searchable UI, and exposes a generated JSON endpoint for each match.
+
+## Requirements
+
+- Node.js `20.x` or newer
+- npm
+
+## Installation
+
+```bash
+npm install
+```
+
+## Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the corresponding URL, default is `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How To Use
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Open the application in a browser.
+2. Review the list of Paris 2024 football matches.
+3. Use search, gender filter, and sort controls to narrow the list.
+4. Each match card displays its generated API endpoint, for example `/api/matches/[matchId]`.
+5. Click `Generate JSON` to fetch match details and review the generated payload.
+6. Use `Export JSON file` to download the payload in a machine-readable format.
 
-## Learn More
+## Data Retrieval And Parsing
 
-To learn more about Next.js, take a look at the following resources:
+Schedule data is fetched from the official Olympic API:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```text
+https://stacy.olympics.com/srm/data/oly/schedule/day/ENG/{date}.json
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The app loads dates from `2024-07-24` to `2024-08-10` and keeps only entries where `disciplineName === "Football"`.
 
-## Deploy on Vercel
+When a user generates JSON for a match, the app calls the local endpoint:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```text
+/api/matches/[matchId]
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+That route fetches additional match details from:
+
+```text
+https://stacy.olympics.com/OG2024/data/RES_ByRSC_H2H~comp=OG2024~disc=FBL~rscResult={matchId}~lang=ENG.json
+```
+
+The final payload is built in `src/lib/endpointPayload.ts` and follows the shape of `example.json`.
+
+## Output Ordering
+
+Matches are ordered deterministically by kickoff timestamp (`startDate`) in ascending order by default.
+
+If two matches have the same kickoff timestamp, `matchId` is used as a tie-breaker to keep the output stable between runs.
+
+The UI also allows reversing the order with the sort control.
+
+## Assumptions
+
+- I beleive most of the data is complete and consistent although it was hard to review everything because offical olympics data source is really huge
+- as stated in `example.json` ot might be the case of header score but I didn't really find how to distinguish it from the source, couldn't find it, so it's omitted. In the source there's mostly just "PEN" and "SHOT" which are penalty and just a shot so then it's defaulting to "open_play"
+- even though in case if some is missing, there are fallbacks in code
+
+## Deployment
+
+The app can be deployed in several standard Next.js ways:
+
+- Vercel, which is the recommended and simplest deployment target for Next.js apps.
+- A custom Node.js server, using the production build and `next start`.
+- Docker containers, by building the app inside an image and running the production server in the container.
+
+General production flow for a Node.js server:
+
+```bash
+npm install
+npm run build
+npm run start
+```

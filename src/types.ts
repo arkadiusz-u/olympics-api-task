@@ -1,4 +1,4 @@
-import { FullScore, OlympicsApiScheduleUnit, ScorerEventType } from "./lib/types";
+import { ExampleMatch, FullScore, OlympicsApiScheduleUnit, ScorerEventType } from "./lib/types";
 
 export type MatchViewModel = {
     id: string;
@@ -14,29 +14,7 @@ export type MatchViewModel = {
     venueLabel: string;
 };
 
-export type EndpointPayload = {
-    competition: {
-        name: string;
-        season: string;
-        round: string;
-    };
-    venue: {
-        name: string;
-        city: string;
-    };
-    kickoff: string;
-    status: string;
-    teams: {
-        home: string;
-        away: string;
-    };
-    score: FullScore;
-    scorers: Scorer[];
-    lineups: {
-        home: Lineup;
-        away: Lineup;
-    };
-};
+export type EndpointPayload = ExampleMatch;
 
 export type Lineup = {
     team: string;
