@@ -1,15 +1,14 @@
 "use client";
 
-import { useCallback, useState } from "react";
-
 import { MatchViewModel } from "@/types";
 import { MatchList } from "@/components/MatchList/MatchList";
 import { SearchBar } from "@/components/SearchBar/SearchBar";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useFilters } from "@/hooks/useFilters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Filters } from "@/lib/parseFilters";
 import { TopBar } from "./TopBar/TopBar";
+import { ApiEndpointDialog } from "@/components/ApiEndpointDialog/ApiEndpointDialog";
+import { useEndpointPayload } from "@/hooks/useEndpointPayload";
 
 type HomeProps = {
   matches: MatchViewModel[];
@@ -20,13 +19,16 @@ type HomeProps = {
 };
 
 export const Home = ({ filteredMatches, search, gender, sortOrder }: HomeProps) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   const { isPending, setFilter, setSearchTerm } = useFilters();
-
-  const generateEndpointDataForMatch = useCallback(() => {
-    setIsDialogOpen(true);
-  }, []);
+  const {
+    endpointPayload,
+    generateEndpointDataForMatch,
+    isDialogOpen,
+    isPayloadLoading,
+    payloadError,
+    selectedMatch,
+    setIsDialogOpen,
+  } = useEndpointPayload();
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -46,16 +48,16 @@ export const Home = ({ filteredMatches, search, gender, sortOrder }: HomeProps) 
           <MatchList filteredMatches={filteredMatches} generateEndpointDataForMatch={generateEndpointDataForMatch} />
         )}
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>JSON endpoint data</DialogTitle>
-                    <DialogDescription>
-                        The JSON endpoint data for the match.
-                    </DialogDescription>
-                </DialogHeader>
-            </DialogContent>
-        </Dialog>
+        {selectedMatch ? (
+          <ApiEndpointDialog
+            isOpen={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+            selectedMatch={selectedMatch}
+            endpointPayload={endpointPayload}
+            payloadError={payloadError}
+            isPayloadLoading={isPayloadLoading}
+          />
+        ) : null}
       </main>
     </div>
   );

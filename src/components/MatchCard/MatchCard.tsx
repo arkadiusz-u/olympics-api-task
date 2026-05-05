@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { getMatchApiEndpoint } from "@/lib/endpointPayload";
 import { MatchViewModel } from "@/types";
 
 interface MatchCardProps {
@@ -14,6 +15,8 @@ export const MatchCard = ({
     match,
     onGenerate,
   }: MatchCardProps) => {
+    const apiEndpoint = getMatchApiEndpoint(match);
+
     return (
       <Card>
         <CardHeader className="gap-3">
@@ -40,6 +43,7 @@ export const MatchCard = ({
               <InfoRow label="Event unit" value={match.match.eventUnitName} />
               <InfoRow label="Venue" value={match.venueLabel} />
               <InfoRow label="Result" value={match.result.toString()} />
+              <InfoRow label="API endpoint" value={apiEndpoint} />
             </div>
           </div>
         </CardContent>

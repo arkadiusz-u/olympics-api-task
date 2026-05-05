@@ -186,6 +186,8 @@ export type OlympicsApiMatchDetailsResponse = {
         value: string;
       }[]
       teamAthletes: TeamAthlete[];
+      teamCode: string;
+      teamCoaches: TeamCoach[];
     }[]
     officials: Official[];
     periods: Period[];
@@ -223,6 +225,17 @@ export type PlayByPlay = {
 
 export type Action = {
   extendedActions: ExtendedAction[];
+  competitors?: {
+    pbpc_code: string;
+    pbpc_order: number;
+    pbpc_type: string;
+    athletes?: {
+      pbpat_code: string;
+      pbpat_order: string;
+      pbpat_bib: string;
+      pbpat_role: string;
+    }[];
+  }[];
   pbpa_Action: string;
   pbpa_ActionAdd: string;
   pbpa_Loc: string;
@@ -284,6 +297,33 @@ export type Official = {
     __typename: string;
   }
   order: number;
+}
+
+export type TeamCoach = {
+  order: number;
+  function: {
+    functionCode: string;
+    description: string;
+  };
+  coach: {
+    code: string;
+    familyName: string;
+    givenName: string;
+    name: string;
+    shortName: string;
+    __typename: string;
+    mainFunction: {
+      category: string;
+    };
+    nationality: {
+      code: string;
+      longDescription: string;
+    };
+    organisation: {
+      code: string;
+      longDescription: string;
+    };
+  };
 }
 
 export type Athlete = {
